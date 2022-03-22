@@ -47,11 +47,11 @@ describe('POST /', () => {
                 .send(JSON.stringify(data))
                 .set('Content-Type', 'application/json')
                 .then(response => {
-                    expect(response.statusCode).toBe(200);
-                    expect(response.body?.data?._id).toBeDefined();
-                    expect(response.body?.data?.userId).toBe(data.userId);
-                    expect(response.body?.data?.title).toBe(data.title);
-                    expect(response.body?.data?.description).toBe(data.description);
+                    expect(response.statusCode).toBe(201);
+                    expect(response.body?._id).toBeDefined();
+                    expect(response.body?.userId).toBe(data.userId);
+                    expect(response.body?.title).toBe(data.title);
+                    expect(response.body?.description).toBe(data.description);
                 });
         });
         test("Should fail with invalid userId", async () => {
@@ -82,7 +82,7 @@ describe('POST /', () => {
                 .set('Content-Type', 'application/json')
                 .then(response => {
                     expect(response.statusCode).toBe(422);
-                    expect(response.body?.error).toBe("Invalid title");
+                    expect(response.body?.error).toBe("title must have minimum of 10 characters");
                 });
         });
         test("Should fail with invalid description", async () => {
@@ -98,7 +98,7 @@ describe('POST /', () => {
                 .set('Content-Type', 'application/json')
                 .then(response => {
                     expect(response.statusCode).toBe(422);
-                    expect(response.body?.error).toBe("Invalid description");
+                    expect(response.body?.error).toBe("description must have minimum of 50 characters");
                 });
         });
     })
@@ -109,12 +109,12 @@ describe('POST /', () => {
                 .get('/users')
                 .then(response => {
                     expect(response.statusCode).toBe(200);
-                    expect(response.body?.data?.users).toBeDefined();
+                    expect(response.body?.users).toBeDefined();
                     // must be array
-                    expect(Array.isArray(response.body?.data?.users)).toBe(true);
-                    const { users, meta } = response.body?.data;
+                    expect(Array.isArray(response.body?.users)).toBe(true);
+                    const { users, meta } = response.body;
                     // must have post count
-                    expect(users[0].postCount).toBeDefined();
+                    expect(users[0].posts).toBeDefined();
                 });
         });
         test("Should have pagination implemented", async () => {
@@ -122,11 +122,10 @@ describe('POST /', () => {
                 .get('/users')
                 .then(response => {
                     expect(response.statusCode).toBe(200);
-                    expect(response.body?.data?.users).toBeDefined();
+                    expect(response.body?.users).toBeDefined();
                     // must be array
-                    expect(Array.isArray(response.body?.data?.users)).toBe(true);
-                    const { meta } = response.body?.data;
-
+                    expect(Array.isArray(response.body?.users)).toBe(true);
+                    const { meta } = response.body;
                     // must have meta object
                     expect(meta).toBeDefined();
                     expect(meta.totalCount).toBeDefined()
